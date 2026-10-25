@@ -8,6 +8,11 @@ This file is the primary update channel: Railway does not send template-update n
 
 ### Changed
 
+- The image is now **public** (`ghcr.io/app-corp/stellar`) and ships compiled, minified build output only: no TypeScript source, no source maps.
+- The app runs from Next.js **standalone** output (`node apps/main/server.js`) instead of a full workspace install.
+- Database migrations, RBAC seed, and admin bootstrap now run from minified bundles during the pre-deploy step.
+- Prisma reads its datasource from a dedicated `prisma.config.mjs`; the URL still comes from `DIRECT_URL`.
+- [`LICENSE.md`](./LICENSE.md): modification, derivative works, and reverse engineering are now explicitly prohibited.
 - Workspace apps (`POS`, `ERP`, `Content Creator`, `Email Marketing`, `Social Media Marketing`) and every content-creator sidebar item (Home, Image Editor, Templates, Files, Post) are now always enabled.
 
 ### Removed

@@ -20,23 +20,27 @@ By deploying, accessing, or using the Software, you agree to these terms. If you
 Subject to Your compliance with this License, App Corp grants You a limited, non-exclusive, non-transferable, non-sublicensable, revocable, royalty-free license to:
 
 1. deploy and run the Software for Internal Business Purposes;
-2. configure the Software and modify its configuration files for Internal Business Purposes;
+2. configure the Software through its supported settings and environment variables for Internal Business Purposes;
 3. make a reasonable number of backup copies for disaster recovery.
+
+No right to modify, adapt, translate, or create derivative works of the Software is granted.
 
 ## 3. Restrictions
 
 You may **not**:
 
-1. copy, publish, distribute, transfer, sell, rent, lease, lend, or otherwise make the Software or any derivative of it available to any third party;
-2. sublicense the Software or provide it as a Third-Party Service;
-3. incorporate the Software into a product or service that You distribute or operate for third parties;
-4. remove, obscure, or alter any copyright, trademark, or license notice in the Software;
-5. reverse engineer, decompile, or disassemble the Software, except to the extent such restriction is prohibited by applicable law;
-6. use the "Stellar" name, logo, or other trademarks of App Corp without prior written permission, except for nominative factual references.
+1. modify, adapt, translate, or create derivative works of the Software, whether in whole or in part;
+2. reverse engineer, decompile, disassemble, or otherwise attempt to derive, reconstruct, or extract the source code, underlying ideas, algorithms, or file formats of the Software, except to the extent such restriction is prohibited by applicable law;
+3. circumvent, remove, or defeat any technical protection measure contained in the Software;
+4. copy, publish, distribute, transfer, sell, rent, lease, lend, or otherwise make the Software or any derivative of it available to any third party;
+5. sublicense the Software or provide it as a Third-Party Service;
+6. incorporate the Software into a product or service that You distribute or operate for third parties;
+7. remove, obscure, or alter any copyright, trademark, or license notice in the Software;
+8. use the "Stellar" name, logo, or other trademarks of App Corp without prior written permission, except for nominative factual references.
 
 ## 4. No Source Code License
 
-The Software is distributed only as compiled container images. This License does not grant You any right to the source code of the Software, and App Corp is under no obligation to provide it.
+The Software is distributed only as compiled, minified container images, without source code or source maps. This License does not grant You any right to the source code of the Software, and App Corp is under no obligation to provide it.
 
 ## 5. Updates and Support
 
