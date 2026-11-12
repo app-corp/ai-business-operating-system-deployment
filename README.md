@@ -139,6 +139,9 @@ If pre-deploy fails, the new container is not switched in.
 
 ## Variables
 
+Full copy for every deploy-form field:
+[Variable descriptions](./railway-template-variables.md).
+
 Prompted: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`,
 `NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY` (sealed), `DATABASE_URL` (sealed),
 `BOOTSTRAP_ADMIN_EMAIL`, `BOOTSTRAP_ADMIN_PASSWORD` (sealed).
