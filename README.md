@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Deploy and Host Stellar with Railway
 
 [![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/deploy/TEMPLATE_CODE)
@@ -193,3 +194,202 @@ template update notifications; image auto-updates are the update mechanism.
 
 Licensed under the **Stellar Self-Host License 1.0**. See the repository
 `LICENSE`.
+=======
+<div align="center">
+
+# Stellar — AI Business Operating System
+
+**A self-hosted ERP, CRM and business operations platform. Deploy it to Railway in one click.**
+
+[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/new/template/TEMPLATE_CODE?utm_medium=integration&utm_source=button&utm_campaign=stellar)
+
+![License](https://img.shields.io/badge/license-Source--available-blue)
+![Platform](https://img.shields.io/badge/platform-Railway-0B0D0E)
+![Runtime](https://img.shields.io/badge/runtime-Node.js%2022-339933)
+
+</div>
+
+---
+
+## What you get
+
+A complete business operating system, running on infrastructure you control:
+
+- **ERP** — customers, products, quotes, invoices, payments, expenses, ledger, inventory and reports
+- **CRM** — contacts, companies and a lead engine
+- **RBAC** — role-based access control with granular per-module permissions
+- **Multi-tenant ready** — invite users and scope their access from User Management
+- **Content tools** — post and template management, image tooling
+- **Translations** — multi-locale UI with per-deployment configuration
+- **Feature flags** — turn individual ERP modules on or off without a rebuild
+
+Everything is served from a single prebuilt container image. Feature flags, URLs and branding are read from environment variables at **runtime**, so changing them in Railway is a redeploy, not a rebuild.
+
+> **Distribution model:** Stellar is distributed as a private, prebuilt container image. The Railway template pulls it on your behalf with registry credentials held by the template. This repository hosts the deployment documentation, not the application source.
+
+---
+
+## Before you click Deploy
+
+The template provisions PostgreSQL and the application for you. It does **not** provision Supabase, which Stellar uses for authentication and file storage. Do this first — it takes about five minutes.
+
+### 1. Create a Supabase project
+
+Go to [supabase.com](https://supabase.com) → **New project**. Wait for provisioning to finish.
+
+### 2. Copy four values from **Project Settings → API**
+
+| Value | Where to find it | Used as |
+| --- | --- | --- |
+| Project URL | API → Project URL | `NEXT_PUBLIC_SUPABASE_URL` |
+| `anon` public key | API → Project API keys | `NEXT_PUBLIC_SUPABASE_ANON_KEY` |
+| `service_role` secret | API → Project API keys | `NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY` **and** `SUPABASE_SERVICE_ROLE_KEY` |
+| Storage endpoint | `<project-url>/storage/v1/object` | `NEXT_PUBLIC_SUPABASE_STORAGE_URL` |
+
+The `service_role` key bypasses row-level security. It is server-side only and is never exposed to the browser.
+
+### 3. Create two storage buckets (**Storage → New bucket**)
+
+| Bucket | Public? | Used as |
+| --- | --- | --- |
+| `erpblob` | No (private) | `NEXT_PUBLIC_SUPABASE_PRIVATE_BUCKET` |
+| `erpblobPublic` | Yes (public) | `NEXT_PUBLIC_SUPABASE_PUBLIC_BUCKET` |
+
+Names must match exactly.
+
+### 4. Choose your admin credentials
+
+| Variable | Notes |
+| --- | --- |
+| `BOOTSTRAP_ADMIN_EMAIL` | The first account. There is no public sign-up. |
+| `BOOTSTRAP_ADMIN_PASSWORD` | Sealed input. Used only if the account does not exist yet. |
+| `BOOTSTRAP_ADMIN_RESET_PASSWORD` | Optional. Set `true` to force-rotate the password on the next deploy. |
+
+---
+
+## Deploy
+
+1. Click the **Deploy on Railway** button at the top of this page.
+2. Paste the Supabase values and your admin credentials into the deploy form.
+3. Deploy. The first boot runs database migrations, seeds roles and permissions, and creates your admin account.
+4. Watch the logs until you see `✔ root admin ready: <your-email>`.
+5. Open the generated domain and sign in.
+
+Railway bills you for the service and the PostgreSQL plugin on your own account. There is no licence fee.
+
+---
+
+## Configuration
+
+### Provided automatically
+
+| Variable | Source |
+| --- | --- |
+| `PORT` | Railway |
+| `RAILWAY_PUBLIC_DOMAIN` | Railway |
+| `DATABASE_URL` | PostgreSQL plugin (private network) |
+| `DIRECT_URL` | PostgreSQL plugin (used for migrations) |
+
+### Required, prompted at deploy time
+
+| Variable | Description |
+| --- | --- |
+| `NEXT_PUBLIC_SUPABASE_URL` | Supabase project URL, e.g. `https://abcdefgh.supabase.co` |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase `anon` public key |
+| `NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY` | Supabase `service_role` key (server-side only) |
+| `SUPABASE_SERVICE_ROLE_KEY` | Duplicate of the same key (legacy alias) |
+| `NEXT_PUBLIC_SUPABASE_STORAGE_URL` | `<project-url>/storage/v1/object` |
+| `NEXT_PUBLIC_BASE_URL` | Public origin. Prefilled as `https://${{ RAILWAY_PUBLIC_DOMAIN }}` |
+| `NEXT_PUBLIC_API_URL` | Public API origin. Usually the same value |
+| `NEXT_PUBLIC_APP_DOMAIN` | Your deployment origin (drives platform gating) |
+| `BOOTSTRAP_ADMIN_EMAIL` | Root admin login email |
+| `BOOTSTRAP_ADMIN_PASSWORD` | Root admin password |
+
+### Optional
+
+| Variable | Description |
+| --- | --- |
+| `NEXT_PUBLIC_APPS_ERP`, `NEXT_PUBLIC_APPS_CONTENT_CREATOR` | Enable whole apps |
+| `NEXT_PUBLIC_ERP_*` | Enable individual ERP modules (`COMPANY`, `CONTACT`, `CUSTOMER`, `EXPENSE`, `INVENTORY`, `INVOICE`, `LEAD`, `LEDGER`, `PAYMENT`, `PRODUCT`, `QUOTE`, `REPORTS`, `TRANSLATIONS`) |
+| `NEXT_PUBLIC_ENABLE_SUCCESS_TOAST`, `NEXT_PUBLIC_ENABLE_ERROR_TOAST`, `NEXT_PUBLIC_ENABLE_WARNING_TOAST` | Toast behaviour |
+| `NEXT_PUBLIC_PAGE_LIMIT` / `NEXT_PUBLIC_MAX_PAGE_LIMIT` | Table pagination |
+| `NEXT_PUBLIC_APP_NAME`, `NEXT_PUBLIC_APP_LOGO` | Branding |
+| `GOOGLE_ANALYTICS_ID` | GA4 measurement ID |
+| `GOOGLE_GENERATIVE_AI_API_KEY`, `REPLICATE_API_TOKEN` | AI-powered features |
+| `NEXT_PUBLIC_PEXELS_API_KEY` | Stock imagery in the image editor |
+| `ALLOWED_IMAGE_HOSTS` | Comma-separated hostnames permitted by the image proxy. Empty allows all |
+
+Changing any variable takes effect on the next redeploy. No rebuild is required.
+
+---
+
+## How deploys work
+
+Each deploy runs in this order:
+
+```
+pre-deploy   yarn release
+             ├─ prisma migrate deploy    apply pending migrations (idempotent)
+             ├─ seed                     roles + permissions (idempotent)
+             └─ bootstrap:admin           create admin account (idempotent)
+start        next start on $PORT
+healthcheck  GET /api/health → {"status":"ok"}
+```
+
+If the pre-deploy step fails, the new version is not promoted and the previous deployment keeps serving traffic. Re-running is always safe — every step is idempotent.
+
+---
+
+## Updating
+
+Railway does not send update notifications for container-image templates. Updates are pull-based:
+
+1. A new image is published (see [`CHANGELOG.md`](./CHANGELOG.md) for what changed).
+2. In Railway, open your service → **Redeploy**.
+3. The new image is pulled and the migration pre-deploy runs automatically.
+
+Because the template tracks the floating `latest` tag, you receive patch and minor releases on your next redeploy. Back up your database before any significant upgrade.
+
+---
+
+## Troubleshooting
+
+| Symptom | Likely cause | Fix |
+| --- | --- | --- |
+| Deploy never goes live, healthcheck times out | `pre-deploy` failed | Open the deploy logs and check the `yarn release` output |
+| `P1001: Can't reach database server` | Migration used a public URL or the DB is still provisioning | Confirm `DATABASE_URL`/`DIRECT_URL` reference the Postgres service; wait and redeploy |
+| `P3009` / failed migration | A previous migration was interrupted | Inspect `_prisma_migrations` in the database; do not re-run blindly |
+| Login fails, no admin exists | `BOOTSTRAP_ADMIN_EMAIL`/`PASSWORD` unset | Set both, redeploy, watch for `✔ root admin ready` |
+| "Invalid API key" or auth errors | Supabase URL/key mismatch | Re-copy from Supabase → Settings → API; keys are per-project |
+| Uploaded images fail, avatars broken | Buckets missing or wrong visibility | Recreate `erpblob` (private) and `erpblobPublic` (public) |
+| Images from a custom Supabase domain fail | Next.js allow-list is built from `*.supabase.co` | Use the default `*.supabase.co` hostname |
+
+Still stuck? [Open an issue](https://github.com/app-corp/ai-business-operating-system-deployment/issues) with your deploy logs (redact secrets) and the image version from the service settings.
+
+---
+
+## Security notes
+
+- Never commit secrets to this repository. All configuration belongs in Railway variables.
+- The `service_role` key grants full database access through Supabase. Treat it like a root password.
+- There is no public sign-up. Create every additional user from **User Management** and grant roles via **RBAC**.
+- Change the bootstrap admin password after your first login if you set it provisionally.
+
+---
+
+## Support
+
+- **Bugs and deploy issues:** [GitHub Issues](https://github.com/app-corp/ai-business-operating-system-deployment/issues)
+- **Railway platform:** [docs.railway.com](https://docs.railway.com)
+- **Supabase platform:** [supabase.com/docs](https://supabase.com/docs)
+
+---
+
+## License
+
+Stellar is **source-available**, not open source. See [LICENSE.md](./LICENSE.md) for the full terms.
+
+In short: you may self-host and use Stellar for your own business, including commercially. You may not redistribute it, resell it, or operate it as a service for third parties. The application source code is not distributed with the image.
+
+"Stellar" and the Stellar logo are trademarks of App Corp. Third-party open-source components bundled with the image remain under their own licenses.
+>>>>>>> bc3324d (docs: add one-click Railway deployment guide, source-available license, and changelog)
