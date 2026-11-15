@@ -164,10 +164,6 @@ Railway's `PORT`. The configured `BOOTSTRAP_ADMIN_EMAIL` is always promoted to
 
 ## Updates and Rollback
 
-Railway does not send update notifications for container-image services. Updates are pull-based:
-
-> > > > > > > 2c19322 (docs: public compiled-only image, no-modification license, repo-backed Dockerfile)
-
 The template pins `ghcr.io/app-corp/stellar:1.0.0` and enables Railway image
 auto-updates for minor/patch releases. Tags: `1.2.3`, `1.2`, `1`, `latest`,
 `sha-<commit>`.
@@ -176,7 +172,6 @@ Pin a version by changing the service image tag; disable auto-updates in service
 settings. Roll back by setting the previous tag — migrations are forward-only.
 Major releases are not auto-applied. Docker-image templates do not get Railway
 template update notifications; image auto-updates are the update mechanism.
-The template tracks the floating `latest` tag, so you receive patch and minor releases on your next redeploy. Because the image is public, you can also pin a specific version — set the service image to `ghcr.io/app-corp/stellar:1.2.3` in Railway → service settings. Back up your database before any significant upgrade.
 
 ---
 
@@ -194,15 +189,6 @@ The template tracks the floating `latest` tag, so you receive patch and minor re
 | Railway cannot pull image                | GHCR package must be public.                                                    |
 | Demo images use another host             | Some marketing content points at the demo bucket; replace for white-labelling.  |
 
-## Support and License
-
-- [Main repository](https://github.com/app-corp/stellar)
-- [Deployment repository](https://github.com/app-corp/ai-business-operating-system-deployment)
-- [Issues](https://github.com/app-corp/stellar/issues)
-
-Licensed under the **Stellar Self-Host License 1.0**. See the repository
-`LICENSE`.
-
 ## Security notes
 
 - Never commit secrets to this repository. All configuration belongs in Railway variables.
@@ -212,15 +198,13 @@ Licensed under the **Stellar Self-Host License 1.0**. See the repository
 
 ---
 
-## Support
+## Support and License
 
-- **Bugs and deploy issues:** [GitHub Issues](https://github.com/app-corp/ai-business-operating-system-deployment/issues)
-- **Railway platform:** [docs.railway.com](https://docs.railway.com)
-- **Supabase platform:** [supabase.com/docs](https://supabase.com/docs)
-
----
-
-## License
+- [Main repository](https://github.com/app-corp/stellar)
+- [Deployment repository](https://github.com/app-corp/ai-business-operating-system-deployment)
+- [Issues](https://github.com/app-corp/stellar/issues)
+- [Railway documentation](https://docs.railway.com)
+- [Supabase documentation](https://supabase.com/docs)
 
 Stellar is **source-available**, not open source. See [LICENSE.md](./LICENSE.md) for the full terms.
 
