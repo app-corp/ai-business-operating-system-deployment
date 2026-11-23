@@ -23,19 +23,15 @@ database or volume is needed.
 
 ## Why Deploy Stellar on Railway?
 
-Railway hosts the container with HTTPS, healthchecks, logs, and scaling without
-managing servers. The public image removes build time, and runtime-resolved
-`NEXT_PUBLIC_*` variables let you change configuration without rebuilding.
-Supabase gives you managed Postgres, Auth, and Storage while you keep control of
-your data.
+Railway supplies HTTPS, healthchecks, logs, and scaling; Supabase supplies
+Postgres, Auth, and Storage while you keep your data.
 
 ## Common Use Cases
 
-- Run a self-hosted ERP for a small or mid-sized company.
+- Run a self-hosted ERP for a small company.
 - Operate retail stores with the POS workspace.
 - Give finance and sales teams AI-assisted analysis and reporting.
 - Keep business data in your own Supabase project.
-- Deploy a private instance with role-based access.
 
 ## Dependencies for Stellar Hosting
 
