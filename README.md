@@ -63,7 +63,8 @@ Railway runs one stateless container from the public
 - **Supabase** provides Postgres (Prisma 7), Auth (sign-in, confirmation,
   password reset), and Storage (public and private buckets).
 - **Pre-deploy** runs before traffic switches: `prisma migrate deploy`, RBAC
-  roles and permissions, the root admin, then storage buckets and default assets.
+  roles and permissions, the root admin, then storage buckets, access policies
+  and default assets.
 - **Runtime** is a Next.js 16 standalone server on Node.js 24, started with
   `node apps/main/server.js` on `$PORT` (default `3000`), healthcheck
   `/api/health`.
@@ -117,8 +118,10 @@ Site URL `https://<your-domain>` and redirects
 `https://<your-domain>/auth/confirm` and
 `https://<your-domain>/auth/reset-password`.
 
-Pre-deploy creates `erpblobPublic` (public) and `erpblob` (private) and uploads
-the default logo and PDF fonts. Override
+Pre-deploy creates `erpblobPublic` (public) and `erpblob` (private), applies the
+storage access policies, and uploads the default logo and PDF fonts. Private
+objects are owner-scoped: a user can only read/write their own uploads, while
+admins use the service-role API. Override
 `NEXT_PUBLIC_SUPABASE_PUBLIC_BUCKET` / `NEXT_PUBLIC_SUPABASE_PRIVATE_BUCKET`
 to use different bucket names. For production, configure custom SMTP under
 **Authentication → Emails**.
@@ -128,7 +131,7 @@ to use different bucket names. For production, configure custom SMTP under
 You need about 10 minutes.
 
 1. Click **Deploy on Railway**.
-2. Fill in the eight prompted values listed in the Variables table.
+2. Fill in the seven prompted values listed in the Variables table.
 3. Deploy and watch for:
    ```text
    ✔ release complete
@@ -146,8 +149,7 @@ If pre-deploy fails, the new container is not switched in.
 | --------------------------------------- | ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
 | `NEXT_PUBLIC_SUPABASE_URL`              | Yes         | Supabase project URL, e.g. `https://abcd.supabase.co`. Project Settings → API; no trailing slash.                                               |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY`         | Yes         | Supabase anon/public key. Browser-safe. Project Settings → API.                                                                                 |
-| `SUPABASE_SERVICE_ROLE_KEY`             | Yes, sealed | Server-side service-role key used by storage code. Use the same key as `NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY`; never expose it to the browser. |
-| `NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY` | Yes, sealed | Service-role key used for admin bootstrap and storage. Excluded from the browser env bag despite its prefix.                                    |
+| `SUPABASE_SERVICE_ROLE_KEY`             | Yes, sealed | Server-side service-role key for admin bootstrap, storage buckets and policies. Never expose it to the browser.                                |
 | `DATABASE_URL`                          | Yes, sealed | Supabase Postgres Session-pooler URL (IPv4, port `5432`) with password and `?sslmode=require`. Used by the app at runtime.                      |
 | `DIRECT_URL`                            | Yes, sealed | Prisma migration connection. Use the same Session-pooler URL as `DATABASE_URL`.                                                                 |
 | `BOOTSTRAP_ADMIN_EMAIL`                 | Yes         | Email for the root admin created on first deploy. Use the address you will sign in with.                                                        |
@@ -189,7 +191,7 @@ node migrate/release.mjs
   → prisma migrate deploy
   → seed RBAC roles and permissions
   → create/update root admin
-  → create buckets and upload fonts/logo
+  → create/update buckets, apply storage policies, upload fonts/logo
 ```
 
 Every step is idempotent. The configured `BOOTSTRAP_ADMIN_EMAIL` is always
@@ -232,7 +234,8 @@ auto-updates are the update mechanism.
 | Login works but menu empty / 403         | Sign in with `BOOTSTRAP_ADMIN_EMAIL`; sign out and back in.                                            |
 | Reset link has wrong host                | Set `NEXT_PUBLIC_APP_DOMAIN` and Supabase Auth Site URL to the public domain.                          |
 | Password reset email missing             | Configure custom SMTP under Supabase **Authentication → Emails**.                                      |
-| Uploads or PDF fonts fail                | Check `erpblobPublic`/`erpblob`, `fonts/inter-*.ttf`, and the service-role key.                        |
+| Uploads or PDF fonts fail                | Check `erpblobPublic`/`erpblob`, the `storage.objects` policies, `fonts/inter-*.ttf`, and the service-role key. |
+| Another user cannot open my private file | Expected: `erpblob` is owner-scoped. Share through the app or use an admin account.                     |
 | AI agent requests fail                   | Check your Google/Replicate key, provider quota, and that the key is set on the service.               |
 | Railway cannot pull image                | GHCR package must be public.                                                                           |
 | Demo images use another host             | Some marketing content points at the demo bucket; replace for white-labelling.                         |
@@ -272,7 +275,9 @@ redeployed automatically. Pin a versioned tag if you want a fixed release.
 - Never commit secrets to this repository. All configuration belongs in Railway
   variables.
 - The service-role key bypasses Supabase RLS. Treat it like a root password and
-  keep it server-side.
+  keep it server-side. It is `SUPABASE_SERVICE_ROLE_KEY` — never create a
+  `NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY`; the browser env script exposes safe
+  `NEXT_PUBLIC_*` values and denylists secret-shaped names.
 - There is no public sign-up. Create every additional user from **User
   Management** and grant roles via **RBAC**.
 - Change the bootstrap admin password after your first login. Set

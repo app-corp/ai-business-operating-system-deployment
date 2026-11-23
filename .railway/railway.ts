@@ -25,12 +25,7 @@ export default defineRailway(() => {
       },
       SUPABASE_SERVICE_ROLE_KEY: {
         description:
-          "Supabase service-role secret for server-side storage code. Never expose it to the browser. Project Settings → API.",
-        isSealed: true,
-      },
-      NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY: {
-        description:
-          "Supabase service-role secret. Server-only; used for admin bootstrap and storage. Never expose it to the browser.",
+          "Supabase service-role secret for admin bootstrap, storage buckets and policies. Server-only; never expose it to the browser. Project Settings → API.",
         isSealed: true,
       },
       DATABASE_URL: {
@@ -51,6 +46,12 @@ export default defineRailway(() => {
         description:
           "Password for the root admin account. Sealed and never logged. Use a strong password.",
         isSealed: true,
+      },
+      BOOTSTRAP_ADMIN_RESET_PASSWORD: {
+        description:
+          "Optional: set true to rotate the root admin password on the next deploy.",
+        defaultValue: "false",
+        isOptional: true,
       },
       NEXT_PUBLIC_SUPABASE_STORAGE_URL: {
         description: "Supabase Storage endpoint for the project.",
