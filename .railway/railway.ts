@@ -74,17 +74,6 @@ export default defineRailway(() => {
         defaultValue: "https://${{RAILWAY_PUBLIC_DOMAIN}}",
         isOptional: true,
       },
-      NEXT_PUBLIC_BASE_URL: {
-        description:
-          "Absolute base URL for links and password-reset emails.",
-        defaultValue: "${{NEXT_PUBLIC_APP_DOMAIN}}",
-        isOptional: true,
-      },
-      NEXT_PUBLIC_API_URL: {
-        description: "Base URL for client API requests.",
-        defaultValue: "${{NEXT_PUBLIC_APP_DOMAIN}}",
-        isOptional: true,
-      },
       NEXT_PUBLIC_APP_LOGO: {
         description:
           "Absolute logo URL in the public Supabase bucket.",
