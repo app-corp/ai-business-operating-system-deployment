@@ -28,6 +28,11 @@ export default defineRailway(() => {
           "Supabase service-role secret for admin bootstrap, storage buckets and policies. Server-only; never expose it to the browser. Project Settings → API.",
         isSealed: true,
       },
+      SUPABASE_ACCESS_TOKEN: {
+        description:
+          "Supabase personal access token used only to apply storage RLS policies. Create at Supabase → Account → Access Tokens. Sealed.",
+        isSealed: true,
+      },
       DATABASE_URL: {
         description:
           "Supabase Postgres Session-pooler URL (IPv4, port 5432), including the password and ?sslmode=require. Used by the app at runtime.",

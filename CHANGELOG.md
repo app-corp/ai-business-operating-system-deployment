@@ -8,7 +8,8 @@ This file is the primary update channel: Railway does not send template-update n
 
 ### Added
 
-- Pre-deploy now creates or corrects both storage buckets and applies idempotent `storage.objects` policies: public read for `erpblobPublic`, owner-scoped read/write for `erpblob`.
+- Pre-deploy now creates or corrects both storage buckets and applies idempotent `storage.objects` policies through the Supabase Management API: public read for `erpblobPublic`, owner-scoped read/write for `erpblob`.
+- `SUPABASE_ACCESS_TOKEN` (a Supabase personal access token) is now required to apply storage policies; the project `postgres` role does not own `storage.objects`.
 - `REQUIRE_BOOTSTRAP_ADMIN=true` in the image makes a missing root-admin credential fail pre-deploy instead of deploying an app nobody can sign into.
 
 ### Changed
