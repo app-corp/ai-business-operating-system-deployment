@@ -94,9 +94,7 @@ Railway runs one stateless container from the public
 
 Create a project near your Railway region. From **Project Settings → API**, copy
 the project URL, anon key, and service-role key. Keep the service-role key
-server-side only. Create a **personal access token** at
-**Account → Access Tokens**; pre-deploy uses it to apply the storage policies
-because hosted Supabase does not let the database `postgres` role create them.
+server-side only.
 
 ### 2. Database connection
 
@@ -121,7 +119,7 @@ Site URL `https://<your-domain>` and redirects
 `https://<your-domain>/auth/reset-password`.
 
 Pre-deploy creates `erpblobPublic` (public) and `erpblob` (private), applies the
-storage access policies through the Supabase Management API, and uploads the
+storage access policies, and uploads the
 default logo and PDF fonts. Private objects are owner-scoped: a user can only
 read/write their own uploads, while admins use the service-role API. Override
 `NEXT_PUBLIC_SUPABASE_PUBLIC_BUCKET` / `NEXT_PUBLIC_SUPABASE_PRIVATE_BUCKET`
@@ -133,7 +131,7 @@ to use different bucket names. For production, configure custom SMTP under
 You need about 10 minutes.
 
 1. Click **Deploy on Railway**.
-2. Fill in the eight prompted values listed in the Variables table.
+2. Fill in the seven prompted values listed in the Variables table.
 3. Deploy and watch for:
    ```text
    ✔ release complete
@@ -152,7 +150,6 @@ If pre-deploy fails, the new container is not switched in.
 | `NEXT_PUBLIC_SUPABASE_URL`              | Yes         | Supabase project URL, e.g. `https://abcd.supabase.co`. Project Settings → API; no trailing slash.                                               |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY`         | Yes         | Supabase anon/public key. Browser-safe. Project Settings → API.                                                                                 |
 | `SUPABASE_SERVICE_ROLE_KEY`             | Yes, sealed | Server-side service-role key for admin bootstrap, storage buckets and policies. Never expose it to the browser.                                |
-| `SUPABASE_ACCESS_TOKEN`                 | Yes, sealed | Supabase personal access token used only to apply storage RLS policies through the Management API.                                              |
 | `DATABASE_URL`                          | Yes, sealed | Supabase Postgres Session-pooler URL (IPv4, port `5432`) with password and `?sslmode=require`. Used by the app at runtime.                      |
 | `DIRECT_URL`                            | Yes, sealed | Prisma migration connection. Use the same Session-pooler URL as `DATABASE_URL`.                                                                 |
 | `BOOTSTRAP_ADMIN_EMAIL`                 | Yes         | Email for the root admin created on first deploy. Use the address you will sign in with.                                                        |
@@ -237,8 +234,8 @@ auto-updates are the update mechanism.
 | Login works but menu empty / 403         | Sign in with `BOOTSTRAP_ADMIN_EMAIL`; sign out and back in.                                            |
 | Reset link has wrong host                | Set `NEXT_PUBLIC_APP_DOMAIN` and Supabase Auth Site URL to the public domain.                          |
 | Password reset email missing             | Configure custom SMTP under Supabase **Authentication → Emails**.                                      |
-| Uploads or PDF fonts fail                | Check `erpblobPublic`/`erpblob`, the `storage.objects` policies, `fonts/inter-*.ttf`, the service-role key and `SUPABASE_ACCESS_TOKEN`. |
-| `must be owner of table objects`         | Add `SUPABASE_ACCESS_TOKEN` from Supabase → Account → Access Tokens; hosted Supabase blocks policy DDL from the `postgres` role. |
+| Uploads or PDF fonts fail                | Check `erpblobPublic`/`erpblob`, the `storage.objects` policies, `fonts/inter-*.ttf`, and the service-role key. |
+| `must be owner of table objects`         | The bootstrap must not run `ALTER TABLE storage.objects` on hosted Supabase; RLS is already enabled. |
 | Another user cannot open my private file | Expected: `erpblob` is owner-scoped. Share through the app or use an admin account.                     |
 | AI agent requests fail                   | Check your Google/Replicate key, provider quota, and that the key is set on the service.               |
 | Railway cannot pull image                | GHCR package must be public.                                                                           |

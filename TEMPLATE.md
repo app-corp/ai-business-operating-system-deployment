@@ -14,9 +14,9 @@ Hosting Stellar means running one stateless Next.js container connected to your
 Supabase project. Railway pulls the public image and runs a pre-deploy job that
 applies Prisma migrations, seeds RBAC roles, creates the root admin, and creates
 the storage buckets and policies with default fonts/logo, then starts the server
-behind HTTPS. You provide eight values: Supabase URL, anon key, the service-role
-key, a personal access token for storage policies, the session-pooler
-`DATABASE_URL`, the `DIRECT_URL`, and the root admin email/password. Supabase
+behind HTTPS. You provide seven values: Supabase URL, anon key, the service-role
+key, the session-pooler `DATABASE_URL`, the `DIRECT_URL`, and the root admin
+email/password. Supabase
 provides Postgres, authentication, password reset, and file storage; Railway
 provides the container, domain, healthchecks, logs, and scaling. No Railway
 database or volume is needed.
@@ -53,9 +53,7 @@ Postgres, Auth, and Storage while you keep your data.
 
 Create a project near your Railway region. From **Project Settings → API**, copy
 the project URL, anon key, and service-role key. Keep the service-role key
-server-side only. Create a **personal access token** at
-**Account → Access Tokens**; pre-deploy uses it to apply the storage policies
-because hosted Supabase does not let the database `postgres` role create them.
+server-side only.
 
 ### 2. Database connection
 
@@ -80,7 +78,7 @@ Site URL `https://[your-domain]` and redirects
 `https://[your-domain]/auth/reset-password`.
 
 Pre-deploy creates `erpblobPublic` (public) and `erpblob` (private), applies the
-storage access policies through the Supabase Management API, and uploads the
+storage access policies, and uploads the
 default logo and PDF fonts. Private objects are owner-scoped: a user can only
 read/write their own uploads, while admins use the service-role API. Override
 `NEXT_PUBLIC_SUPABASE_PUBLIC_BUCKET` / `NEXT_PUBLIC_SUPABASE_PRIVATE_BUCKET`
@@ -90,7 +88,7 @@ to use different bucket names. For production, configure custom SMTP under
 ## Deploy
 
 1. Click **Deploy on Railway**.
-2. Fill in the eight prompted values listed in the Variables table.
+2. Fill in the seven prompted values listed in the Variables table.
 3. Deploy and watch for:
    ```text
    ✔ release complete
@@ -109,7 +107,6 @@ If pre-deploy fails, the new container is not switched in.
 | `NEXT_PUBLIC_SUPABASE_URL` | Yes | Supabase project URL; no trailing slash. |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Yes | Supabase anon/public key; browser-safe. |
 | `SUPABASE_SERVICE_ROLE_KEY` | Yes, sealed | Server-side service-role key for admin bootstrap, storage buckets and policies. Never expose it to the browser. |
-| `SUPABASE_ACCESS_TOKEN` | Yes, sealed | Supabase personal access token used only to apply storage RLS policies through the Management API. |
 | `DATABASE_URL` | Yes, sealed | Session-pooler URL (IPv4, port `5432`) with `?sslmode=require`. |
 | `DIRECT_URL` | Yes, sealed | Prisma migration URL; use the same value as `DATABASE_URL`. |
 | `BOOTSTRAP_ADMIN_EMAIL` | Yes | Root admin email; use the address you will sign in with. |
@@ -184,8 +181,8 @@ auto-updates are the update mechanism.
 | Login works but menu empty / 403 | Sign in with `BOOTSTRAP_ADMIN_EMAIL`; sign out and back in. |
 | Reset link has wrong host | Set `NEXT_PUBLIC_APP_DOMAIN` and Supabase Auth Site URL. |
 | Password reset email missing | Configure custom SMTP under Supabase **Authentication → Emails**. |
-| Uploads or PDF fonts fail | Check `erpblobPublic`/`erpblob`, the `storage.objects` policies, `fonts/inter-*.ttf`, the service-role key and `SUPABASE_ACCESS_TOKEN`. |
-| `must be owner of table objects` | Add `SUPABASE_ACCESS_TOKEN` from Supabase → Account → Access Tokens; hosted Supabase blocks policy DDL from the `postgres` role. |
+| Uploads or PDF fonts fail | Check `erpblobPublic`/`erpblob`, the `storage.objects` policies, `fonts/inter-*.ttf`, and the service-role key. |
+| `must be owner of table objects` | The bootstrap must not run `ALTER TABLE storage.objects` on hosted Supabase; RLS is already enabled. |
 | Another user cannot open my private file | Expected: `erpblob` is owner-scoped. Share through the app or use an admin account. |
 | Railway cannot pull image | GHCR package must be public. |
 | Site not indexed / empty sitemap | Expected on self-hosted domains. |
